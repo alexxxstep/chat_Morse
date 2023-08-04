@@ -19,11 +19,24 @@ const messageContainer = document.getElementById('message-container');
 const nameInput = document.getElementById('name-input');
 let userName = '';
 
+function getMessage(messageInput) {
+  return `${userName} ': '${messageInput.value}`;
+}
+
 sendContainer.addEventListener('submit', (e) => {
   e.preventDefault();
-  const message = userName + ': ' + messageInput.value;
-  socket.emit('chat message', message);
-  messageInput.value = '';
+  if (messageInput.value) {
+    const message = getMessage(messageInput);
+    socket.emit('chat message', message);
+    messageInput.value = '';
+  }
+});
+
+messageInput.addEventListener('keypress', function (event) {
+  const char = event.key;
+  if (char !== '.' && char !== '-' && char !== ' ' && char !== 'Enter') {
+    event.preventDefault();
+  }
 });
 
 nameInput.addEventListener('keyup', (e) => {
@@ -31,6 +44,7 @@ nameInput.addEventListener('keyup', (e) => {
     userName = nameInput.value;
     nameInput.style.display = 'none';
     sendContainer.style.display = '';
+    messageInput.focus();
   }
 });
 
