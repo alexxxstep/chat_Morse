@@ -9,6 +9,29 @@ const io = require('socket.io')(server);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
-});
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'public/index.html'));
+// });
+
+//Socket connections
+let activeUsers = new Set();
+
+io.on('connection', onConnected);
+
+function onConnected(socket) {
+  console.log('connected', socket.id);
+  activeUsers.add(socket.id);
+
+  io.emit('clients__total', activeUsers.size);
+
+  // receive message
+  socket.on('chat message', (message) => {
+    console.log('Message received: ' + message);
+  });
+
+  socket.on('disconnect', (socket) => {
+    console.log('Socket disconnected', socket.id);
+    activeUsers.delete(socket.id);
+    io.emit('clients__total', activeUsers.size);
+  });
+}
