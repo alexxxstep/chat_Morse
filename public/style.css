@@ -6,8 +6,12 @@ body {
 }
 
 #message-container {
+  display: flex;
+  flex-direction: column;
   width: 80%;
-  max-width: 1200px;
+  max-width: 700px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 #message-container div {
@@ -24,7 +28,7 @@ body {
   padding-bottom: 30px;
   bottom: 0;
   background-color: white;
-  max-width: 1200px;
+  max-width: 700px;
   width: 80%;
   display: flex;
 }

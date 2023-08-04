@@ -22,12 +22,16 @@ function onConnected(socket) {
   console.log('connected', socket.id);
   activeUsers.add(socket.id);
 
-  io.emit('clients__total', activeUsers.size);
+  //io.emit('clients__total', activeUsers.size);
 
   // receive message
   socket.on('chat message', (message) => {
     console.log('Message received: ' + message);
+
+    io.emit('chat message', message);
   });
+
+  // Broadcast the message to all connected clients
 
   socket.on('disconnect', (socket) => {
     console.log('Socket disconnected', socket.id);
