@@ -8,3 +8,7 @@ const server = app.listen(PORT, () => console.log(`server on port ${PORT}`));
 const io = require('socket.io')(server);
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+});
