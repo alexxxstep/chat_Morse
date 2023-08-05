@@ -47,7 +47,6 @@ function onConnected(socket) {
   });
 
   socket.on('disconnect', () => {
-    socket.broadcast.emit('user-disconnected', getUser(socket.id));
     users = users.filter((user) => user.id !== socket.id);
     io.emit('users-count', users);
   });

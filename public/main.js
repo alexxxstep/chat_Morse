@@ -18,10 +18,6 @@ socket.on('users-count', (data) => {
 socket.on('user-connected', (user) => {
   appendMessage(`${user.name} connected`);
 });
-socket.on('user-disconnected', (user) => {
-  appendMessage(`${user.name} disconnected`);
-});
-
 socket.on('chat-message', (data) => {
   const { message, user } = data;
   appendMessage(`${user.name}: ${message}`);
