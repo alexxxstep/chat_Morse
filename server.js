@@ -16,26 +16,37 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Socket connections
 let activeUsers = new Set();
 
+let users = [];
+
+//Socket connections
 io.on('connection', onConnected);
 
+//Socket connections
 function onConnected(socket) {
-  console.log('connected', socket.id);
   activeUsers.add(socket.id);
 
-  //io.emit('clients__total', activeUsers.size);
-
+  //new-user
+  socket.on('new-user', (userName) => {
+    const user = {};
+    user.id = socket.id;
+    user.name = userName;
+    user.role = 'new-user';
+    user.active = true;
+    users.push(user);
+    io.emit('users-count', users);
+    socket.broadcast.emit('user-connected', user);
+  });
   // receive message
-  socket.on('chat message', (message) => {
-    console.log('Message received: ' + message);
-
-    io.emit('chat message', message);
+  socket.on('send-chat-msg', (message) => {
+    //console.log(message);
+    //send msg to other users
+    //io.emit('chat-message', message);
+    socket.broadcast.emit('chat-message', message);
+    //io.emit('send-chat-msg', message);
   });
 
-  // Broadcast the message to all connected clients
-
-  socket.on('disconnect', (socket) => {
-    console.log('Socket disconnected', socket.id);
-    activeUsers.delete(socket.id);
-    io.emit('clients__total', activeUsers.size);
+  socket.on('disconnect', () => {
+    users = users.filter((user) => user.id !== socket.id);
+    io.emit('users-count', users);
   });
 }
