@@ -41,7 +41,8 @@ function onConnected(socket) {
     //console.log(message);
     //send msg to other users
     //io.emit('chat-message', message);
-    socket.broadcast.emit('chat-message', message);
+    const user = getUser(socket.id);
+    socket.broadcast.emit('chat-message', { message, user });
     //io.emit('send-chat-msg', message);
   });
 
@@ -49,4 +50,9 @@ function onConnected(socket) {
     users = users.filter((user) => user.id !== socket.id);
     io.emit('users-count', users);
   });
+}
+
+function getUser(socketID) {
+  const user = users.find((user) => user.id === socketID);
+  return user;
 }

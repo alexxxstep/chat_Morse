@@ -18,12 +18,16 @@ socket.on('users-count', (data) => {
 socket.on('user-connected', (user) => {
   appendMessage(`${user.name} connected`);
 });
-socket.on('chat-message', appendMessage);
+socket.on('chat-message', (data) => {
+  const { message, user } = data;
+  appendMessage(`${user.name}: ${message}`);
+});
 
 messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
   if (messageInput.value) {
-    const message = getMessage(messageInput);
+    const message = messageInput.value;
+    appendMessage(`You: ${message}`);
     socket.emit('send-chat-msg', message);
     messageInput.value = '';
   }
