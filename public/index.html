@@ -16,11 +16,21 @@
   </head>
   <body>
     <input type="text" id="name-input" placeholder="Enter your name..." />
-    <div id="message-container" style="display: none"></div>
-    <form id="send-container" style="display: none">
-      <input type="text" id="message-input" />
-      <button type="submit" id="send-button">Send</button>
-    </form>
+    <div id="chat-container" _style="display: none">
+      <div id="users-container">
+        <h4>Users:</h4>
+      </div>
+
+      <div id="message-container">
+        <h4>Chat</h4>
+      </div>
+
+      <form id="send-container">
+        <input type="text" id="message-input" />
+        <button type="submit" id="send-button">Send</button>
+      </form>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="main.js"></script>
   </body>

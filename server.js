@@ -9,13 +9,8 @@ const io = require('socket.io')(server);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.get('/', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'public/index.html'));
-// });
-
 //Socket connections
 let activeUsers = new Set();
-
 let users = [];
 
 //Socket connections
