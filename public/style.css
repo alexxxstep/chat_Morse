@@ -3,6 +3,7 @@ body {
   margin: 0;
   display: block;
   font-family: Roboto, sans-serif;
+  background-color: linear-gradient(lightcyan, lightblue);
 }
 
 #chat-container {
@@ -23,6 +24,7 @@ body {
 }
 #users-container h4 {
   margin: 0 12px;
+  display: flex;
 }
 
 #message-container {
@@ -76,4 +78,21 @@ body {
   padding: 2px 10px;
   outline: none;
   background-color: #f1f1f1;
+}
+
+.user-item {
+  margin: 2px 5px;
+  padding: 2px 10px;
+  width: 80%;
+  text-align: center;
+  background-color: darkslategrey;
+  color: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  border: solid 2px #ddd;
+}
+
+.user-joined {
+  background-color: rgb(8, 248, 28);
+  border: solid 5px rgb(46, 46, 46);
 }
