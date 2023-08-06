@@ -24,34 +24,53 @@ function onConnected(socket) {
     user.role = 'new-user';
     user.joined = false;
     user.room = { id: socket.id, name: userName };
-
+    user.invitedUserID = '';
     const roomId = socket.id;
+
     socket.join(roomId);
-    console.log(socket);
 
     users.push(user);
-    // socket.broadcast.emit('user-connected', user);
     upgradeUserListClient();
   });
 
   /*INVITE OTHER USER */
-  socket.on('join-user', (data) => {
+  socket.on('invite-user', (data) => {
     const { userID, roomID } = data;
+    const userJoin = getUser(userID);
+    const userOwner = getUser(socket.id);
+    userOwner.invitedUserID = userID;
+    if (userJoin) {
+      io.to(userJoin.id).emit('invitation', userOwner.name);
+    }
+
+    upgradeUserListClient();
+  });
+
+  /* JOIN TO CHAT*/
+  socket.on('join-user', (userID) => {
+    const userOwner = getUser(userID);
+    const userJoin = getUser(socket.id);
+
+    userOwner.invitedUserID = '';
+    const roomID = userOwner.room.id;
+
     users
       .filter((user) => user.room.id === roomID)
       .map((user) => {
         user.joined = false;
         user.room = { id: user.id, name: user.name };
       });
-    const userJoin = getUser(userID);
-    const userOwner = getUser(socket.id);
 
-    userJoin.room = { id: userOwner['id'], name: userOwner['name'] };
+    userJoin.room = userOwner['room'];
     userJoin.joined = true;
     userOwner.joined = true;
 
-    clearMessages(roomID);
+    socket.join(roomID);
 
+    io.to(userOwner.id).emit('set-title', userOwner.name, userJoin.name);
+    io.to(userJoin.id).emit('set-title', userOwner.name, userJoin.name);
+
+    clearMessages(roomID);
     upgradeUserListClient();
   });
 
@@ -77,7 +96,6 @@ function onConnected(socket) {
 
     if (usersRoom.length === 2) {
       const userTO = usersRoom.filter((user) => user.id !== socket.id)[0];
-      console.log(userTO);
 
       sendMessage(userFrom, userTO, message);
     }

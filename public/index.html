@@ -16,13 +16,17 @@
   </head>
   <body>
     <input type="text" id="name-input" placeholder="Enter your name..." />
-    <div id="chat-container" _style="display: none">
-      <div id="users-container">
-        <h4>Users:</h4>
+    <h4 id="user-name-auth" style="display: none">User:</h4>
+
+    <div id="chat-container" style="display: none">
+      <div class="users">
+        <h4>Active users:</h4>
+        <div id="users-container"></div>
       </div>
 
-      <div id="message-container">
+      <div class="chat">
         <h4 id="chat-title">Chat</h4>
+        <div id="message-container"></div>
       </div>
 
       <form id="send-container">

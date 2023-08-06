@@ -1,6 +1,7 @@
 const socket = io();
 
 // main elements
+const userNameAuth = document.getElementById('user-name-auth');
 const chatTitle = document.getElementById('chat-title');
 const messageForm = document.getElementById('send-container');
 const messageInput = document.getElementById('message-input');
@@ -28,14 +29,22 @@ socket.on('receive-msg', (message) => {
   appendMessage(message);
 });
 
+socket.on('invitation', (userInitiator) => {
+  appendMessage(`*** ${userInitiator} invite to begin chat`);
+});
+
+socket.on('set-title', (user1, user2) => {
+  chatTitle.innerText = `Chat: ${user1} <--> ${user2}`;
+});
+
 socket.on('clear-msgs', () => {
   messageContainer.innerHTML = '';
 });
 
 /* UPGRADE USERS LIST */
 function upgradeUserList(users) {
-  console.log(users);
   socketID = socket.id;
+
   usersContainer.innerHTML = '';
   let currentUser = users.find((user) => user.id === socketID);
   let roomID = currentUser.room.id;
@@ -58,22 +67,25 @@ function upgradeUserList(users) {
         usersContainer.append(userElement);
       }
 
-      if (!user.joined && user.room.id !== roomID) {
+      if (!user.joined && user.room.id !== roomID && !user.invitedUserID) {
         userElement.addEventListener('click', () => {
           const params = { userID: user.id, roomID: roomID };
-          console.log(params);
-          socket.emit('join-user', params);
-          chatTitle.innerText = `Chat with ${userName} and ${user.name}`;
+          // socket.emit('join-user', params);
+          socket.emit('invite-user', params);
+        });
+        usersContainer.append(userElement);
+      }
+
+      if (user.invitedUserID === socketID) {
+        userElement.classList.add('user-invite');
+        userElement.innerText = `${user.name} - accept`;
+        userElement.addEventListener('click', () => {
+          socket.emit('join-user', user.id);
         });
         usersContainer.append(userElement);
       }
     });
 }
-
-// socket.on('chat-message', (data) => {
-//   const { message, user } = data;
-//   appendMessage(`${user.name}: ${message}`);
-// });
 
 messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -95,12 +107,12 @@ function getMessage(messageInput) {
 }
 
 // Can input only chars from MORSE
-// messageInput.addEventListener('keypress', function (event) {
-//   const char = event.key;
-//   if (char !== '.' && char !== '-' && char !== ' ' && char !== 'Enter') {
-//     event.preventDefault();
-//   }
-// });
+messageInput.addEventListener('keypress', function (event) {
+  const char = event.key;
+  if (char !== '.' && char !== '-' && char !== ' ' && char !== 'Enter') {
+    event.preventDefault();
+  }
+});
 
 //Input name new user
 nameInput.addEventListener('keyup', (e) => {
@@ -108,6 +120,8 @@ nameInput.addEventListener('keyup', (e) => {
   if (e.key === 'Enter') {
     userName = nameInput.value;
     nameInput.style.display = 'none';
+    userNameAuth.style.display = '';
+    userNameAuth.innerHTML = `User: ${userName}`;
     // nameInput.value = '';
     socket.emit('new-user', userName);
     chatContainer.style.display = '';
