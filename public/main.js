@@ -34,9 +34,9 @@ socket.on('receive-msg', (msg) => {
   let displayMsg;
 
   if (userRole === 'newby') {
-    displayMsg = `${msg.from}: ${msg.decodedMsg}`;
+    displayMsg = msg.decodedMsg;
   } else {
-    displayMsg = `${msg.from}: ${msg.encodedMsg}`;
+    displayMsg = msg.encodedMsg;
   }
 
   appendMessage(displayMsg);

@@ -117,8 +117,8 @@ function getUser(socketID) {
 }
 
 function sendMessage(userFrom, userTo, msg) {
-  let decodedMsg = decodeMorse(msg);
-  let encodedMsg = msg;
+  let decodedMsg = `${userFrom.name}: ${decodeMorse(msg)}`;
+  let encodedMsg = `${userFrom.name}: ${msg}`;
 
   io.to(userTo.room.id).emit('receive-msg', {
     encodedMsg,
