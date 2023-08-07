@@ -13,20 +13,33 @@ const chatContainer = document.getElementById('chat-container');
 let socketID;
 let userName = '';
 let roomID = '';
-const currentUser = undefined;
+let currentUser = undefined;
+let userRole = '';
 
 //authentication
 const nameInput = document.getElementById('name-input');
 
 //receive from server information
 // listen each message and add it to the socket
+socket.on('set-role', (role) => {
+  userRole = role;
+  console.log(userRole);
+});
 
 socket.on('users-count', (data) => {
   upgradeUserList(data);
 });
 
-socket.on('receive-msg', (message) => {
-  appendMessage(message);
+socket.on('receive-msg', (msg) => {
+  let displayMsg;
+
+  if (userRole === 'newby') {
+    displayMsg = `${msg.from}: ${msg.decodedMsg}`;
+  } else {
+    displayMsg = `${msg.from}: ${msg.encodedMsg}`;
+  }
+
+  appendMessage(displayMsg);
 });
 
 socket.on('invitation', (userInitiator) => {
@@ -102,10 +115,6 @@ function appendMessage(message) {
   messageContainer.append(messageElement);
 }
 
-function getMessage(messageInput) {
-  return `${userName}: ${messageInput.value}`;
-}
-
 // Can input only chars from MORSE
 messageInput.addEventListener('keypress', function (event) {
   const char = event.key;
@@ -127,6 +136,6 @@ nameInput.addEventListener('keyup', (e) => {
     chatContainer.style.display = '';
 
     messageInput.focus();
-    appendMessage(`Wellcome, ${userName}! You joined`);
+    appendMessage(`Welcome, ${userName}! You joined`);
   }
 });
